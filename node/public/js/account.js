@@ -70,3 +70,10 @@ var loginButton = document.getElementById("login");
 var signupButton = document.getElementById("signup");
 loginButton.onclick = account.login.bind(account);
 signupButton.onclick = account.signup.bind(account);
+
+// Bind Enter to login
+document.addEventListener("keyup", function (event) {
+    if (event.key === "Enter") {
+        loginButton.click();
+    }
+});
