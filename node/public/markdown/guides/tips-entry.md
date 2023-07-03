@@ -48,6 +48,8 @@
 - Microsoft Onenote fix Quick Notes language
     - Delete `%HOMEPATH%\AppData\Local\Microsoft\OneNote`
 
+- `exec /custom-entrypoint.sh: no such file or directory`: Change the line endings of the file from CRLF to LF.
+
 ## Microsoft Word
 
 - Change default font
