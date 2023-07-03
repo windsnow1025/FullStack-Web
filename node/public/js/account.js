@@ -21,9 +21,10 @@ class Account {
         await axios.post("/api/user-api/login", {
             data: { username: this.username, password: this.password }
         }).then(res => {
-            let isLoggedIn = res.data;
+            let isLoggedIn = res.data.token ? true : false;
             if (isLoggedIn) {
-                document.cookie = "username=" + this.username + "; path=/";
+                // Save token
+                localStorage.setItem('token', res.data.token);
                 alert("Login Success");
                 console.log("Login Success");
                 window.history.back();

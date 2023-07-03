@@ -6,12 +6,24 @@ import openai
 import logging
 import os
 import concurrent.futures
+import jwt
 
 app = Flask(__name__)
 
 
 @app.route("/", methods=["POST"])
 def generate():
+
+    # Verify the JWT
+    token = request.form.get("token")
+    logging.info(f"token: {token}")
+    try:
+        decoded = jwt.decode(token, os.environ["JWT_SECRET"], algorithms=["HS256"])
+        logging.info(f"decoded: {decoded}")
+    except Exception as e:
+        logging.error(f"jwt.decode error: {e}")
+        return str(e)
+
     messages = request.form.get("messages")
     messages = list(eval(messages))
     model = request.form.get("model")

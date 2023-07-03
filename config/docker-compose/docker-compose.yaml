@@ -11,6 +11,7 @@ services:
       - MYSQL_USER=<MYSQL_USER>
       - MYSQL_PASSWORD=<MYSQL_PASSWORD>
       - MYSQL_DATABASE=<MYSQL_DATABASE>
+      - JWT_SECRET=<JWT_SECRET>
 
   pyweb:
     image: pyweb
@@ -19,6 +20,7 @@ services:
     restart: always
     environment:
       - OPENAI_API_KEY=<OPENAI_API_KEY>
+      - JWT_SECRET=<JWT_SECRET>
 
   sql:
     image: sql

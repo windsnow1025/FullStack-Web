@@ -3,23 +3,24 @@ const express = require('express');
 const router = express.Router();
 const UserSQL = require("./user-sql");
 
+const jwt = require('jsonwebtoken');
+
 // Data Processing
 
 router.post('/login', async (req, res, next) => {
     try {
-        // Get Data
         let data = req.body.data;
         let result = await UserSQL.Show();
-        // Judge if data.username and data.password match
         let isLoggedIn = false;
         result.forEach(element => {
             if (data.username == element.username && data.password == element.password) {
                 isLoggedIn = true;
-                res.send(true);
+                // Generate token
+                const token = jwt.sign({ username: data.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                res.json({ token });
                 next();
             }
         });
-        // Response, Next
         if (isLoggedIn == false) {
             res.send(false);
             next();

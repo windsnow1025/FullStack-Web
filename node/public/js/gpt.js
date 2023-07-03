@@ -172,8 +172,8 @@ class GPT {
     // Generate Response
     async generate() {
         // If not logged in, return
-        const username = getCookie("username");
-        if (username == null || username == "") {
+        const token = localStorage.getItem('token');
+        if (!token) {
             alert("Please login first.");
             return;
         }
@@ -198,9 +198,7 @@ class GPT {
         formData.append("model", model);
         formData.append("temperature", temperature);
         formData.append("stream", stream);
-
-        // Post the username
-        axios.post("/api/gpt-api/" + username);
+        formData.append("token", token);
 
         // Stream mode off
         if (!stream) {

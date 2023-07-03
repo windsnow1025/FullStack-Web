@@ -1,13 +1,16 @@
-export function getCookie(name) {
-    var cookieArr = document.cookie.split("; ");
-    for (var i = 0; i < cookieArr.length; i++) {
-        var cookiePair = cookieArr[i].split("=");
-        if (name === cookiePair[0]) {
-            return decodeURIComponent(cookiePair[1]);
-        }
-    }
-    return null;
+export function getToken() {
+    return localStorage.getItem('token');
 }
+
+export function parseJwt(token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+};
 
 export function handleAuth() {
     const loginButton = document.getElementById("loginButton");
@@ -15,13 +18,16 @@ export function handleAuth() {
     const SignOutButton = document.getElementById("SignOutButton");
 
     SignOutButton.onclick = function () {
-        document.cookie = "username=; path=/;";
+        localStorage.removeItem('token');
         location.reload();
     };
 
-    const username = getCookie("username");
+    const token = getToken();
 
-    if (username != null && username != "") {
+    if (token) {
+        const payload = parseJwt(token);
+        const username = payload.username;
+
         // Hide login button
         loginButton.style.display = "none";
         // Show username
