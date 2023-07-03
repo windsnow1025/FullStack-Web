@@ -9,6 +9,7 @@ module.exports = {
         "account": "./public/js/account.js",
         "message-transmitter": "./public/js/message-transmitter.js",
         "gpt": "./public/js/gpt.js",
+        "bookmarks": "./public/js/bookmarks.js",
     },
     output: {
         path: path.resolve(__dirname, './dist'),
