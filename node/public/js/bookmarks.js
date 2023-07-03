@@ -1,11 +1,40 @@
 import { getUsername } from "./auth";
+import axios from 'axios';
 
 let username = getUsername();
-if (username == "windsnow1025@gmail.com") {
-    console.log("Admin");
-} else {
-    console.log("User");
-}
+let isAdmin = username == "windsnow1025@gmail.com";
+console.log(isAdmin ? "Admin" : "User");
+
+// Fetch bookmarks from the server
+axios.get('/api/bookmarks-api/' + username)
+    .then(response => {
+        let bookmarks = response.data;
+        let column1 = document.getElementById('Column1');
+        bookmarks.forEach(bookmark => {
+            let div = document.createElement('div');
+            div.textContent = bookmark.title;
+            div.onclick = () => window.open(bookmark.url, '_blank');
+            if (isAdmin) {
+                div.oncontextmenu = (event) => {
+                    event.preventDefault();
+                    let newTitle = prompt('Enter new title', bookmark.title);
+                    let newUrl = prompt('Enter new URL', bookmark.url);
+                    if (newTitle && newUrl) {
+                        // Update bookmark on the server
+                        axios.put('/api/bookmarks/' + bookmark.id, { title: newTitle, url: newUrl })
+                            .then(() => {
+                                // Update bookmark on the page
+                                div.textContent = newTitle;
+                                div.onclick = () => window.open(newUrl, '_blank');
+                            })
+                            .catch(console.error);
+                    }
+                };
+            }
+            column1.appendChild(div);
+        });
+    })
+    .catch(console.error);
 
 function RowShow(NumberInRow) {
     //Count the amount of divs in row
