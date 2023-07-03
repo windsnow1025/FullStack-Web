@@ -1,5 +1,12 @@
 import { getUsername } from "./auth";
 
+let username = getUsername();
+if (username == "windsnow1025@gmail.com") {
+    console.log("Admin");
+} else {
+    console.log("User");
+}
+
 function RowShow(NumberInRow) {
     //Count the amount of divs in row
     var RowDocument = document.getElementById("Row");
@@ -40,7 +47,3 @@ function ColumnShow(Row, NumberInColumn) {
     }
 }
 
-let username = getUsername();
-if (username == "windsnow1025@gmail.com") {
-    console.log("Admin");
-}
