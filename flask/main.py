@@ -84,7 +84,7 @@ def generate():
 
     except Exception as e:
         logging.error(f"openai.ChatCompletion.create error: {e}")
-        return "openai.ChatCompletion.create error"
+        return str(e)
 
 
 @app.route("/", methods=["GET"])
