@@ -13,17 +13,21 @@ export function parseJwt(token) {
 };
 
 export function handleAuth() {
+    // Get elements
     const loginButton = document.getElementById("loginButton");
     const loggedInUsername = document.getElementById("loggedInUsername");
     const SignOutButton = document.getElementById("SignOutButton");
 
+    // Add event listeners
     SignOutButton.onclick = function () {
         localStorage.removeItem('token');
         location.reload();
     };
 
+    // Check if user is logged in
     const token = getToken();
 
+    // If user is logged in, show username and SignOut button
     if (token) {
         const payload = parseJwt(token);
         const username = payload.username;
