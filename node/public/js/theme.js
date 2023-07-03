@@ -17,6 +17,9 @@ export function applyTheme(theme) {
             body.classList.remove("dark-theme");
         }
     }
+
+    // Save theme to local storage
+    localStorage.setItem("theme", theme);
 }
 
 export function applyMarkdownTheme(theme) {
@@ -59,15 +62,26 @@ export function applyMarkdownTheme(theme) {
             document.head.appendChild(lightCss);
         }
     }
+
+    // Save theme to local storage
+    localStorage.setItem("markdownTheme", theme);
 }
 
 export function initializeTheme() {
+
+    // Listen for theme change
     const themeSelect = document.getElementById("themeSelect");
     themeSelect.addEventListener("change", (event) => {
         const selectedTheme = event.target.value;
         applyTheme(selectedTheme);
         applyMarkdownTheme(selectedTheme);
     });
-    applyTheme();
-    applyMarkdownTheme();
+
+    // Get theme from local storage
+    const localStorageTheme = localStorage.getItem("theme");
+    const localStorageMarkdownTheme = localStorage.getItem("markdownTheme");
+
+    // Apply the theme
+    applyTheme(localStorageTheme);
+    applyMarkdownTheme(localStorageMarkdownTheme);
 }
