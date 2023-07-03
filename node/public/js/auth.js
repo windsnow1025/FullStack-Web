@@ -12,6 +12,15 @@ export function parseJwt(token) {
     return JSON.parse(jsonPayload);
 };
 
+export function getUsername() {
+    const token = getToken();
+    if (token) {
+        const payload = parseJwt(token);
+        return payload.username;
+    }
+    return null;
+}
+
 export function handleAuth() {
     // Get elements
     const loginButton = document.getElementById("loginButton");
@@ -25,18 +34,15 @@ export function handleAuth() {
     };
 
     // Check if user is logged in
-    const token = getToken();
+    const username = getUsername();
 
     // If user is logged in, show username and SignOut button
-    if (token) {
-        const payload = parseJwt(token);
-        const username = payload.username;
-
+    if (username) {
         // Hide login button
         loginButton.style.display = "none";
         // Show username
         loggedInUsername.style.display = "block";
-        loggedInUsername.innerHTML = "Welcome: " + username;
+        loggedInUsername.innerHTML = username;
         // Show SignOut button
         SignOutButton.style.display = "block";
     }
