@@ -16,7 +16,7 @@ const poolQuery = util.promisify(pool.query).bind(pool);
 async function testConnection() {
     let attempts = 0;
     let maxAttempts = 5;
-    let delay = 3000;
+    let delay = 4000;
 
     await new Promise(resolve => setTimeout(resolve, delay));
     
