@@ -7,10 +7,8 @@ const MessageSQL = require("./message-sql");
 
 router.get('/', async (req, res, next) => {
     try {
-        // Get Data
         let data = await MessageSQL.Show();
-        // Response, Next
-        res.send(data);
+        res.status(200).send(data);
         next();
     } catch (err) {
         console.error("Error in GET /:", err);
@@ -21,12 +19,9 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
     try {
-        // Get Data
         let data = req.body.data;
-        // Store Data
         await MessageSQL.Store(data);
-        // Response, Next
-        res.send(true);
+        res.status(200).send(true);
         next();
     } catch (err) {
         console.error("Error in POST /:", err);
@@ -37,12 +32,9 @@ router.post('/', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
     try {
-        // Get Data
         let id = req.params.id;
-        // Delete Data
         await MessageSQL.Delete(id);
-        // Response, Next
-        res.send(true);
+        res.status(200).send(true);
         next();
     } catch (err) {
         console.error("Error in DELETE /:id:", err);

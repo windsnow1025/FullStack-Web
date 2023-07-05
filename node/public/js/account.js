@@ -26,11 +26,9 @@ class Account {
                 // Save token
                 localStorage.setItem('token', res.data.token);
                 alert("Login Success");
-                console.log("Login Success");
                 window.history.back();
             } else {
                 alert("Login Fail");
-                console.log("Login Fail");
             }
         }).catch(err => {
             console.error(err);
