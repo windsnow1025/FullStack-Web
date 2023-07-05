@@ -11,18 +11,18 @@ router.post('/login', async (req, res, next) => {
     try {
         let data = req.body.data;
         let result = await UserSQL.Show();
-        let isLoggedIn = false;
+        let isSuccess = false;
         result.forEach(element => {
             if (data.username == element.username && data.password == element.password) {
-                isLoggedIn = true;
+                isSuccess = true;
                 // Generate token
                 const token = jwt.sign({ username: data.username }, process.env.JWT_SECRET, { expiresIn: '24h' });
                 res.status(200).json({ token });
                 next();
             }
         });
-        if (isLoggedIn == false) {
-            res.send("Invalid Username or Password");
+        if (!isSuccess) {
+            res.status(401).send("Invalid Username or Password");
             next();
         }
     } catch (err) {
@@ -42,7 +42,7 @@ router.post('/signup', async (req, res, next) => {
         result.forEach(element => {
             if (data.username == element.username) {
                 duplication = true;
-                res.send(false);
+                res.status(401).send("Username already exists");
                 next();
             }
         });

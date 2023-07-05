@@ -18,21 +18,22 @@ class Account {
 
     async login() {
         this.getData();
-        await axios.post("/api/user-api/login", {
-            data: { username: this.username, password: this.password }
-        }).then(res => {
-            let isLoggedIn = res.data.token ? true : false;
-            if (isLoggedIn) {
-                // Save token
-                localStorage.setItem('token', res.data.token);
-                alert("Login Success");
-                window.history.back();
+        try {
+            let res = await axios.post("/api/user-api/login", {
+                data: { username: this.username, password: this.password }
+            });
+            // Save token
+            localStorage.setItem('token', res.data.token);
+            alert("Login Success");
+            window.history.back();
+        } catch (err) {
+            if (err.response.status == 401) {
+                alert("Invalid Username or Password");
             } else {
                 alert("Login Fail");
+                console.error(err);
             }
-        }).catch(err => {
-            console.error(err);
-        })
+        }
     }
 
     isValidInput(input) {
@@ -47,19 +48,20 @@ class Account {
             alert("Username or Password contains invalid characters or has an invalid length.");
             return;
         }
-        axios.post("/api/user-api/signup", {
-            data: { username: this.username, password: this.password }
-        }).then(res => {
-            if (res.data == false) {
-                alert("Username already exists.");
-                return;
-            }
+        try {
+            let res = await axios.post("/api/user-api/signup", {
+                data: { username: this.username, password: this.password }
+            });
             alert("Signup Success");
-            console.log(res.data);
-        }).catch(err => {
-            alert("Signup Fail");
-            console.error(err);
-        })
+            window.history.back();
+        } catch (err) {
+            if (err.response.status == 401) {
+                alert("Username already exists.");
+            } else {
+                alert("Signup Fail");
+                console.error(err);
+            }
+        }
     }
 }
 
