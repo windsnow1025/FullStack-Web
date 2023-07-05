@@ -2,4 +2,3 @@ openai
 Flask
 waitress
 retry
-PyJWT

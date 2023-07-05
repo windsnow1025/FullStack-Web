@@ -178,6 +178,16 @@ class GPT {
             return;
         }
 
+        // Authentication
+        try {
+            const res = await axios.post("/api/auth-api/", { token: token });
+        } catch (err) {
+            const SignOutButton = document.getElementById("SignOutButton");
+            SignOutButton.click();
+            alert("Authentication failed. Please login again.");
+            return;
+        }
+
         // Set status to generating
         this.status.innerHTML = "Generating...";
         document.getElementById("generate").innerHTML = "Stop";
@@ -198,7 +208,6 @@ class GPT {
         formData.append("model", model);
         formData.append("temperature", temperature);
         formData.append("stream", stream);
-        formData.append("token", token);
 
         // Stream mode off
         if (!stream) {
