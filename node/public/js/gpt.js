@@ -7,7 +7,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import '../css/markdown.css';
 
 // Account
-import { getCookie, handleAuth } from './auth.js';
+import { handleAuth } from './auth.js';
 handleAuth();
 
 // Theme
