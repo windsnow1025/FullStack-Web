@@ -21,8 +21,8 @@ marked.setOptions({
 });
 
 function getFileName() {
-    var urlParams = new URLSearchParams(window.location.search);
-    var filename = urlParams.get('filename');
+    const urlParams = new URLSearchParams(window.location.search);
+    const filename = urlParams.get('filename');
     return filename;
 }
 
