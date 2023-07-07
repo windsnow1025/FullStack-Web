@@ -50,13 +50,13 @@ async function Show() {
 }
 
 async function Store(firstTitle, secondTitle, url, comment) {
-    let sql = "INSERT INTO bookmarks (first-title, second-title, url, comment) VALUES (?,?,?,?)";
+    let sql = "INSERT INTO bookmarks (first_title, second_title, url, comment) VALUES (?,?,?,?)";
     await poolQuery(sql, [firstTitle, secondTitle, url, comment]);
     console.log("1 bookmark inserted");
 }
 
 async function Update(id, firstTitle, secondTitle, url, comment) {
-    let sql = "UPDATE bookmarks SET first-title = ?, second-title = ?, url = ?, comment = ? WHERE id = ?";
+    let sql = "UPDATE bookmarks SET first_title = ?, second_title = ?, url = ?, comment = ? WHERE id = ?";
     await poolQuery(sql, [firstTitle, secondTitle, url, comment, id]);
     console.log("1 bookmark updated");
 }

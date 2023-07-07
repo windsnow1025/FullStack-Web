@@ -23,8 +23,8 @@ CREATE TABLE conversations (
 
 CREATE TABLE bookmarks (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    first-title VARCHAR(255) NOT NULL,
-    second-title VARCHAR(255) NOT NULL,
+    first_title VARCHAR(255) NOT NULL,
+    second_title VARCHAR(255) NOT NULL,
     url VARCHAR(255) NOT NULL,
-    comment TEXT NOT NULL,
+    comment TEXT NOT NULL
 );
