@@ -6,7 +6,7 @@
 
 ## Requirements
 
-Logged in as root user in Debian 11.
+Logged in as the root user in Debian 11 with a minimum RAM of 2GB.
 
 ## Setup
 
@@ -85,7 +85,7 @@ docker build -t sql .
 
 ### Docker Compose
 
-Edit `FullStack-Web/config/docker-compose/docker-compose.yaml`, change `MYSQL_ROOT_PASSWORD`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`, `OPENAI_API_KEY` to your own.
+Edit `FullStack-Web/config/docker-compose/docker-compose.yaml`, change `MYSQL_ROOT_PASSWORD`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`, `JWT_SECRET`, `OPENAI_API_KEY` to your own.
 
 Copy `FullStack-Web/config/docker-compose/docker-compose.yaml` to `/root/docker-compose.yaml`.
 
