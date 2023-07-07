@@ -31,8 +31,8 @@ function RowShow(NumberInRow) {
 
 function ColumnShow(Row, NumberInColumn) {
     //Count the amount of divs in column
-    ColumnDocument = document.getElementById("Column" + Row.toString());
-    ColumnTotal = ColumnDocument.getElementsByTagName('div').length;
+    var ColumnDocument = document.getElementById("Column" + Row.toString());
+    var ColumnTotal = ColumnDocument.getElementsByTagName('div').length;
     for (let i = 1; i <= ColumnTotal; i++) {
         var ChangeDivID = "Main" + Row.toString() + "-" + i.toString();
         var ChangeDivDocument = document.getElementById(ChangeDivID);
@@ -47,3 +47,27 @@ function ColumnShow(Row, NumberInColumn) {
     }
 }
 
+window.onload = function() {
+    var RowDocument = document.getElementById("Row");
+    var divs = RowDocument.getElementsByTagName('div');
+    for (let i = 0; i < divs.length; i++) {
+        divs[i].onclick = function() {
+            RowShow(i + 1);
+        }
+    }
+}
+
+window.onload = function() {
+    var item2 = document.getElementsByClassName("item2")[0];
+    var columns = item2.getElementsByTagName('div');
+    for (let i = 0; i < columns.length; i++) {
+        if(columns[i].id.includes("Column")) {
+            var divs = columns[i].getElementsByTagName('div');
+            for (let j = 0; j < divs.length; j++) {
+                divs[j].onclick = function() {
+                    ColumnShow(i + 1, j + 1);
+                }
+            }
+        }
+    }
+}
