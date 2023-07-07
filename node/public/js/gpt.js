@@ -178,19 +178,22 @@ class GPT {
             return;
         }
 
+        // Set status to generating
+        this.status.innerHTML = "Generating...";
+        document.getElementById("generate").innerHTML = "Stop";
+
         // Authentication
         try {
             const res = await axios.post("/api/auth-api/", { token: token });
         } catch (err) {
+            this.status.innerHTML = "Ready";
+            document.getElementById("generate").innerHTML = "Generate";
             const SignOutButton = document.getElementById("SignOutButton");
             SignOutButton.click();
             alert("Authentication failed. Please login again.");
             return;
         }
 
-        // Set status to generating
-        this.status.innerHTML = "Generating...";
-        document.getElementById("generate").innerHTML = "Stop";
 
         // Set streaming status
         this.wait_response.push(true);
