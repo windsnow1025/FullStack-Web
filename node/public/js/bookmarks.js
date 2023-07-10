@@ -12,17 +12,37 @@ let isAdmin = username == "windsnow1025@gmail.com";
 console.log(isAdmin ? "Admin" : "User");
 
 function displayBookmarks(bookmarks) {
-    const container = document.querySelector('div');
+    const tableBody = document.querySelector('#bookmarksTable tbody');
+    tableBody.innerHTML = ''; // Clear the table body
     bookmarks.forEach(bookmark => {
-        const div = document.createElement('div');
-        div.textContent = `${bookmark.first_title} - ${bookmark.second_title} - ${bookmark.url} - ${bookmark.comment}`;
+        const tr = document.createElement('tr');
 
+        // Create table data for each attribute
+        const firstTitleTd = document.createElement('td');
+        firstTitleTd.textContent = bookmark.first_title;
+        tr.appendChild(firstTitleTd);
+
+        const secondTitleTd = document.createElement('td');
+        secondTitleTd.textContent = bookmark.second_title;
+        tr.appendChild(secondTitleTd);
+
+        const urlCommentTd = document.createElement('td');
+        const a = document.createElement('a');
+        a.href = bookmark.url;
+        a.textContent = bookmark.comment;
+        urlCommentTd.appendChild(a);
+        tr.appendChild(urlCommentTd);
+
+        const editButtonTd = document.createElement('td');
         const editButton = document.createElement('button');
         editButton.textContent = 'Edit';
         editButton.addEventListener('click', () => {
             // code to edit this bookmark
         });
+        editButtonTd.appendChild(editButton);
+        tr.appendChild(editButtonTd);
 
+        const deleteButtonTd = document.createElement('td');
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
         deleteButton.addEventListener('click', () => {
@@ -31,10 +51,10 @@ function displayBookmarks(bookmarks) {
                 axios.get('/api/bookmark-api/').then(res => displayBookmarks(res.data));
             });
         });
+        deleteButtonTd.appendChild(deleteButton);
+        tr.appendChild(deleteButtonTd);
 
-        div.appendChild(editButton);
-        div.appendChild(deleteButton);
-        container.appendChild(div);
+        tableBody.appendChild(tr);
     });
 }
 
