@@ -1,6 +1,11 @@
 import {getUsername} from "./auth";
 import axios from 'axios';
 
+// Account
+import {handleAuth} from './auth.js';
+
+handleAuth();
+
 // Theme
 import {initializeTheme} from './theme';
 
@@ -46,6 +51,10 @@ function displayBookmarks(bookmarks) {
         const editButton = document.createElement('button');
         editButton.textContent = 'Edit';
         editButton.addEventListener('click', () => {
+            if (!isAdmin) {
+                alert('Only admins can edit bookmarks.');
+                return;
+            }
             if (editButton.textContent === 'Edit') {
                 // Make the fields editable
                 firstTitleTd.contentEditable = true;
@@ -78,17 +87,20 @@ function displayBookmarks(bookmarks) {
                 });
             }
         });
+        buttonTd.appendChild(editButton);
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
         deleteButton.addEventListener('click', () => {
+            if (!isAdmin) {
+                alert('Only admins can delete bookmarks.');
+                return;
+            }
             deleteBookmark(bookmark.id).then(() => {
                 // reload bookmarks
                 axios.get('/api/bookmark-api/').then(res => displayBookmarks(res.data));
             });
         });
-
-        buttonTd.appendChild(editButton);
         buttonTd.appendChild(deleteButton);
         tr.appendChild(buttonTd);
 
@@ -96,21 +108,12 @@ function displayBookmarks(bookmarks) {
     });
 }
 
-function addBookmark(bookmark) {
-    return axios.post('/api/bookmark-api/', bookmark);
-}
-
-function editBookmark(id, bookmark) {
-    return axios.put(`/api/bookmark-api/${id}`, bookmark);
-}
-
-function deleteBookmark(id) {
-    return axios.delete(`/api/bookmark-api/${id}`);
-}
-
-
 document.querySelector('#addBookmarkForm').addEventListener('submit', function (event) {
     event.preventDefault();
+    if (!isAdmin) {
+        alert('Only admins can add bookmarks.');
+        return;
+    }
     const form = event.target;
     const bookmark = {
         firstTitle: form.firstTitle.value,
@@ -126,7 +129,6 @@ document.querySelector('#addBookmarkForm').addEventListener('submit', function (
         console.error('Error adding bookmark:', error);
     });
 });
-
 
 window.onload = function () {
     // Fetch bookmarks from the server on window load

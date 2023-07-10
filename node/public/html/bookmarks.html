@@ -12,13 +12,18 @@
 </head>
 
 <body>
-<div>
-    <label for="themeSelect">Theme:</label>
-    <select id="themeSelect" title="themeSelect">
-        <option value="system">System</option>
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-    </select>
+<div class="Flex-space-around">
+    <a href="./account.html" target="_self" id="loginButton">Login / Signup</a>
+    <span id="loggedInUsername" class="hide"></span>
+    <a href="" id="SignOutButton" class="hide">Sign Out</a>
+    <span>
+        <label for="themeSelect">Theme:</label>
+        <select id="themeSelect" title="themeSelect">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+    </span>
 </div>
 <div>
     <form id="addBookmarkForm">
