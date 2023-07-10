@@ -21,6 +21,16 @@ textarea {
     border-radius: 8px;
 }
 
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table, th, td {
+    border: solid;
+    text-align: center;
+}
+
 .hide {
     display: none;
 }
