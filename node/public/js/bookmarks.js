@@ -41,7 +41,8 @@ function displayBookmarks(bookmarks) {
         urlCommentTd.appendChild(a);
         tr.appendChild(urlCommentTd);
 
-        const editButtonTd = document.createElement('td');
+        const buttonTd = document.createElement('td');
+
         const editButton = document.createElement('button');
         editButton.textContent = 'Edit';
         editButton.addEventListener('click', () => {
@@ -77,10 +78,7 @@ function displayBookmarks(bookmarks) {
                 });
             }
         });
-        editButtonTd.appendChild(editButton);
-        tr.appendChild(editButtonTd);
 
-        const deleteButtonTd = document.createElement('td');
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
         deleteButton.addEventListener('click', () => {
@@ -89,8 +87,10 @@ function displayBookmarks(bookmarks) {
                 axios.get('/api/bookmark-api/').then(res => displayBookmarks(res.data));
             });
         });
-        deleteButtonTd.appendChild(deleteButton);
-        tr.appendChild(deleteButtonTd);
+
+        buttonTd.appendChild(editButton);
+        buttonTd.appendChild(deleteButton);
+        tr.appendChild(buttonTd);
 
         tableBody.appendChild(tr);
     });
