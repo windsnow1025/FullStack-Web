@@ -1,4 +1,4 @@
-import { getUsername } from "./auth";
+import {getUsername} from "./auth";
 
 let username = getUsername();
 if (username == "windsnow1025@gmail.com") {
@@ -19,8 +19,7 @@ function RowShow(NumberInRow) {
             ChangeDivDocument.style.display = "none";
             //Hide other divs in main
             ColumnShow(i, 0);
-        }
-        else {
+        } else {
             //Show the current div in column
             ChangeDivDocument.style.display = "block";
             //Show the first div in main corresponding to the current div in column
@@ -39,34 +38,31 @@ function ColumnShow(Row, NumberInColumn) {
         if (i != NumberInColumn) {
             //Hide divs in main
             ChangeDivDocument.style.display = "none";
-        }
-        else {
+        } else {
             //Show the current div in main
             ChangeDivDocument.style.display = "block";
         }
     }
 }
 
-window.onload = function() {
-    var RowDocument = document.getElementById("Row");
-    var divs = RowDocument.getElementsByTagName('div');
-    for (let i = 0; i < divs.length; i++) {
-        divs[i].onclick = function() {
-            RowShow(i + 1);
-        }
+// Add event listeners for Row
+var RowDocument = document.getElementById("Row");
+var divs = RowDocument.getElementsByTagName('div');
+for (let i = 0; i < divs.length; i++) {
+    divs[i].onclick = function () {
+        RowShow(i + 1);
     }
 }
 
-window.onload = function() {
-    var item2 = document.getElementsByClassName("item2")[0];
-    var columns = item2.getElementsByTagName('div');
-    for (let i = 0; i < columns.length; i++) {
-        if(columns[i].id.includes("Column")) {
-            var divs = columns[i].getElementsByTagName('div');
-            for (let j = 0; j < divs.length; j++) {
-                divs[j].onclick = function() {
-                    ColumnShow(i + 1, j + 1);
-                }
+// Add event listeners for Column
+var item2 = document.getElementsByClassName("item2")[0];
+var columns = item2.getElementsByTagName('div');
+for (let i = 0; i < columns.length; i++) {
+    if (columns[i].id.includes("Column")) {
+        var divs = columns[i].getElementsByTagName('div');
+        for (let j = 0; j < divs.length; j++) {
+            divs[j].onclick = function () {
+                ColumnShow(i + 1, j + 1);
             }
         }
     }
