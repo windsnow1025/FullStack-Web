@@ -108,6 +108,18 @@ function displayBookmarks(bookmarks) {
     });
 }
 
+function addBookmark(bookmark) {
+    return axios.post('/api/bookmark-api/', bookmark);
+}
+
+function editBookmark(id, bookmark) {
+    return axios.put(`/api/bookmark-api/${id}`, bookmark);
+}
+
+function deleteBookmark(id) {
+    return axios.delete(`/api/bookmark-api/${id}`);
+}
+
 document.querySelector('#addBookmarkForm').addEventListener('submit', function (event) {
     event.preventDefault();
     if (!isAdmin) {
