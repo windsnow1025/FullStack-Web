@@ -26,6 +26,14 @@ function displayBookmarks(bookmarks) {
         secondTitleTd.textContent = bookmark.second_title;
         tr.appendChild(secondTitleTd);
 
+        const urlTd = document.createElement('td');
+        urlTd.textContent = bookmark.url;
+        tr.appendChild(urlTd);
+
+        const commentTd = document.createElement('td');
+        commentTd.textContent = bookmark.comment;
+        tr.appendChild(commentTd);
+
         const urlCommentTd = document.createElement('td');
         const a = document.createElement('a');
         a.href = bookmark.url;
@@ -37,7 +45,37 @@ function displayBookmarks(bookmarks) {
         const editButton = document.createElement('button');
         editButton.textContent = 'Edit';
         editButton.addEventListener('click', () => {
-            // code to edit this bookmark
+            if (editButton.textContent === 'Edit') {
+                // Make the fields editable
+                firstTitleTd.contentEditable = true;
+                secondTitleTd.contentEditable = true;
+                urlTd.contentEditable = true;
+                commentTd.contentEditable = true;
+
+                // Change the button text to 'Submit'
+                editButton.textContent = 'Submit';
+            } else {
+                // Make the fields non-editable
+                firstTitleTd.contentEditable = false;
+                secondTitleTd.contentEditable = false;
+                urlTd.contentEditable = false;
+                commentTd.contentEditable = false;
+
+                // Change the button text back to 'Edit'
+                editButton.textContent = 'Edit';
+
+                // Update the bookmark
+                const updatedBookmark = {
+                    firstTitle: firstTitleTd.textContent,
+                    secondTitle: secondTitleTd.textContent,
+                    url: urlTd.textContent,
+                    comment: commentTd.textContent
+                };
+                editBookmark(bookmark.id, updatedBookmark).then(() => {
+                    // reload bookmarks
+                    axios.get('/api/bookmark-api/').then(res => displayBookmarks(res.data));
+                });
+            }
         });
         editButtonTd.appendChild(editButton);
         tr.appendChild(editButtonTd);
@@ -57,7 +95,6 @@ function displayBookmarks(bookmarks) {
         tableBody.appendChild(tr);
     });
 }
-
 
 function addBookmark(bookmark) {
     return axios.post('/api/bookmark-api/', bookmark);
