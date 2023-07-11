@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 // Account
-import {handleAuth,getUsername} from './auth.js';
+import {handleAuth, getUsername} from './auth.js';
+
 handleAuth();
 let username = getUsername();
 let isAdmin = username == "windsnow1025@gmail.com";
@@ -13,7 +14,10 @@ initializeTheme();
 
 function displayBookmarks(bookmarks) {
     const tableBody = document.querySelector('#bookmarksTable tbody');
-    tableBody.innerHTML = ''; // Clear the table body
+    // Remove all rows except the first one (the form)
+    while (tableBody.children.length > 1) {
+        tableBody.removeChild(tableBody.lastChild);
+    }
     bookmarks.forEach(bookmark => {
         const tr = document.createElement('tr');
 
@@ -115,22 +119,24 @@ function deleteBookmark(id) {
     return axios.delete(`/api/bookmark-api/${id}`);
 }
 
-document.querySelector('#addBookmarkForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+document.querySelector('#addButton').addEventListener('click', function () {
     if (!isAdmin) {
         alert('Only admins can add bookmarks.');
         return;
     }
-    const form = event.target;
+    const row = document.querySelector('#addBookmarkRow');
     const bookmark = {
-        firstTitle: form.firstTitle.value,
-        secondTitle: form.secondTitle.value,
-        url: form.url.value,
-        comment: form.comment.value
+        firstTitle: row.children[0].textContent,
+        secondTitle: row.children[1].textContent,
+        url: row.children[2].textContent,
+        comment: row.children[3].textContent
     };
     addBookmark(bookmark).then(() => {
-        form.reset();
-        // reload bookmarks
+        // Clear the input fields
+        for (let i = 0; i < 4; i++) {
+            row.children[i].textContent = '';
+        }
+        // Reload bookmarks
         axios.get('/api/bookmark-api/').then(res => displayBookmarks(res.data));
     }).catch(error => {
         console.error('Error adding bookmark:', error);

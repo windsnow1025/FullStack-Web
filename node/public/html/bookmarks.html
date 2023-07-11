@@ -25,15 +25,6 @@
         </select>
     </span>
 </div>
-<div>
-    <form id="addBookmarkForm">
-        <input type="text" name="firstTitle" placeholder="First title" required>
-        <input type="text" name="secondTitle" placeholder="Second title" required>
-        <input type="text" name="url" placeholder="URL" required>
-        <input type="text" name="comment" placeholder="Comment" required>
-        <button type="submit">Add bookmark</button>
-    </form>
-</div>
 <table id="bookmarksTable">
     <thead>
     <tr>
@@ -46,6 +37,14 @@
     </tr>
     </thead>
     <tbody>
+    <tr id="addBookmarkRow">
+        <td contenteditable="plaintext-only"></td>
+        <td contenteditable="plaintext-only"></td>
+        <td contenteditable="plaintext-only"></td>
+        <td contenteditable="plaintext-only"></td>
+        <td></td>
+        <td><button id="addButton">Add</button></td>
+    </tr>
     <!-- Bookmarks will be inserted here -->
     </tbody>
 </table>
