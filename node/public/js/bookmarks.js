@@ -1,20 +1,15 @@
-import {getUsername} from "./auth";
 import axios from 'axios';
 
 // Account
-import {handleAuth} from './auth.js';
-
+import {handleAuth,getUsername} from './auth.js';
 handleAuth();
+let username = getUsername();
+let isAdmin = username == "windsnow1025@gmail.com";
 
 // Theme
 import {initializeTheme} from './theme';
 
 initializeTheme();
-
-let username = getUsername();
-console.log(username);
-let isAdmin = username == "windsnow1025@gmail.com";
-console.log(isAdmin ? "Admin" : "User");
 
 function displayBookmarks(bookmarks) {
     const tableBody = document.querySelector('#bookmarksTable tbody');
