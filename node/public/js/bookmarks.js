@@ -167,8 +167,30 @@ window.onload = function () {
     // Fetch bookmarks from the server on window load
     axios.get('/api/bookmark-api/').then(res => {
         // Display bookmarks
+        bookmarks.bookmarks = res.data;
         bookmarks.displayBookmarks(res.data);
     }).catch(error => {
         console.error('Error fetching bookmarks:', error);
     });
 };
+
+// Get the search input element
+const searchInput = document.querySelector('#searchInput');
+
+// Add an event listener to the search input
+searchInput.addEventListener('input', function() {
+    // Get the search term
+    const searchTerm = this.value.toLowerCase();
+
+    // Filter the bookmarks
+    const filteredBookmarks = bookmarks.bookmarks.filter(bookmark => {
+        // Check if the search term is in the first title, second title, url or comment
+        return bookmark.first_title.toLowerCase().includes(searchTerm) ||
+            bookmark.second_title.toLowerCase().includes(searchTerm) ||
+            bookmark.url.toLowerCase().includes(searchTerm) ||
+            bookmark.comment.toLowerCase().includes(searchTerm);
+    });
+
+    // Display the filtered bookmarks
+    bookmarks.displayBookmarks(filteredBookmarks);
+});
