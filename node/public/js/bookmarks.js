@@ -65,7 +65,7 @@ class Bookmarks {
 
             const editButton = document.createElement('button');
             editButton.textContent = 'Edit';
-            editButton.addEventListener('click', () => {
+            editButton.addEventListener('click', async () => {
                 if (!isAdmin) {
                     alert('Only admins can edit bookmarks.');
                     return;
@@ -96,10 +96,14 @@ class Bookmarks {
                         url: urlTd.textContent,
                         comment: commentTd.textContent
                     };
-                    this.editBookmark(bookmark.id, updatedBookmark).then(() => {
-                        // reload bookmarks
-                        axios.get('/api/bookmark-api/').then(res => this.displayBookmarks(res.data));
-                    });
+                    await this.editBookmark(bookmark.id, updatedBookmark);
+
+                    // reload bookmarks
+                    let res = await axios.get('/api/bookmark-api/');
+                    this.bookmarks = res.data;
+
+                    // filter bookmarks
+                    this.filterBookmarks();
                 }
             });
             buttonTd.appendChild(editButton);
@@ -111,9 +115,13 @@ class Bookmarks {
                     alert('Only admins can delete bookmarks.');
                     return;
                 }
-                this.deleteBookmark(bookmark.id).then(() => {
+                this.deleteBookmark(bookmark.id).then(async () => {
                     // reload bookmarks
-                    axios.get('/api/bookmark-api/').then(res => displayBookmarks(res.data));
+                    let res = await axios.get('/api/bookmark-api/');
+                    this.bookmarks = res.data;
+
+                    // filter bookmarks
+                    this.filterBookmarks();
                 });
             });
             buttonTd.appendChild(deleteButton);
@@ -123,8 +131,33 @@ class Bookmarks {
         });
     }
 
-    addBookmark(bookmark) {
-        return axios.post('/api/bookmark-api/', bookmark);
+    async addBookmark() {
+        if (!isAdmin) {
+            alert('Only admins can add bookmarks.');
+            return;
+        }
+
+        const row = document.querySelector('#addBookmarkRow');
+        const bookmark = {
+            firstTitle: row.children[0].textContent,
+            secondTitle: row.children[1].textContent,
+            url: row.children[2].textContent,
+            comment: row.children[3].textContent
+        };
+        await axios.post('/api/bookmark-api/', bookmark);
+
+        // Clear the input fields
+        for (let i = 0; i < 4; i++) {
+            row.children[i].textContent = '';
+        }
+
+        // reload bookmarks
+        let res = await axios.get('/api/bookmark-api/');
+        this.bookmarks = res.data;
+
+        // filter bookmarks
+        this.filterBookmarks();
+
     }
 
     editBookmark(id, bookmark) {
@@ -135,33 +168,30 @@ class Bookmarks {
         return axios.delete(`/api/bookmark-api/${id}`);
     }
 
+    filterBookmarks() {
+        // Get the search input element
+        const searchInput = document.querySelector('#searchInput');
+        // Get the search term
+        const searchTerm = searchInput.value.toLowerCase();
+
+        // Filter the bookmarks
+        const filteredBookmarks = this.bookmarks.filter(bookmark => {
+            // Check if the search term is in the first title, second title, url or comment
+            return bookmark.first_title.toLowerCase().includes(searchTerm) ||
+                bookmark.second_title.toLowerCase().includes(searchTerm) ||
+                bookmark.url.toLowerCase().includes(searchTerm) ||
+                bookmark.comment.toLowerCase().includes(searchTerm);
+        });
+
+        // Display the filtered bookmarks
+        bookmarks.displayBookmarks(filteredBookmarks);
+    }
+
 }
 
 const bookmarks = new Bookmarks();
 
-document.querySelector('#addButton').addEventListener('click', function () {
-    if (!isAdmin) {
-        alert('Only admins can add bookmarks.');
-        return;
-    }
-    const row = document.querySelector('#addBookmarkRow');
-    const bookmark = {
-        firstTitle: row.children[0].textContent,
-        secondTitle: row.children[1].textContent,
-        url: row.children[2].textContent,
-        comment: row.children[3].textContent
-    };
-    bookmarks.addBookmark(bookmark).then(() => {
-        // Clear the input fields
-        for (let i = 0; i < 4; i++) {
-            row.children[i].textContent = '';
-        }
-        // Reload bookmarks
-        axios.get('/api/bookmark-api/').then(res => bookmarks.displayBookmarks(res.data));
-    }).catch(error => {
-        console.error('Error adding bookmark:', error);
-    });
-});
+document.querySelector('#addButton').addEventListener('click', bookmarks.addBookmark.bind(bookmarks));
 
 window.onload = function () {
     // Fetch bookmarks from the server on window load
@@ -176,21 +206,5 @@ window.onload = function () {
 
 // Get the search input element
 const searchInput = document.querySelector('#searchInput');
-
 // Add an event listener to the search input
-searchInput.addEventListener('input', function() {
-    // Get the search term
-    const searchTerm = this.value.toLowerCase();
-
-    // Filter the bookmarks
-    const filteredBookmarks = bookmarks.bookmarks.filter(bookmark => {
-        // Check if the search term is in the first title, second title, url or comment
-        return bookmark.first_title.toLowerCase().includes(searchTerm) ||
-            bookmark.second_title.toLowerCase().includes(searchTerm) ||
-            bookmark.url.toLowerCase().includes(searchTerm) ||
-            bookmark.comment.toLowerCase().includes(searchTerm);
-    });
-
-    // Display the filtered bookmarks
-    bookmarks.displayBookmarks(filteredBookmarks);
-});
+searchInput.addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
