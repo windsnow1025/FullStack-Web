@@ -15,6 +15,7 @@ initializeTheme();
 class Bookmarks {
     constructor() {
         this.bookmarks = [];
+        this.fetchBookmarks();
     }
 
     displayBookmarks(bookmarks) {
@@ -76,6 +77,12 @@ class Bookmarks {
 
             tableBody.appendChild(tr);
         });
+    }
+
+    async fetchBookmarks() {
+        let res = await axios.get('/api/bookmark-api/');
+        this.bookmarks = res.data;
+        this.displayBookmarks(this.bookmarks);
     }
 
     async addBookmark() {
@@ -189,18 +196,4 @@ const bookmarks = new Bookmarks();
 
 document.querySelector('#addButton').addEventListener('click', bookmarks.addBookmark.bind(bookmarks));
 
-window.onload = function () {
-    // Fetch bookmarks from the server on window load
-    axios.get('/api/bookmark-api/').then(res => {
-        // Display bookmarks
-        bookmarks.bookmarks = res.data;
-        bookmarks.displayBookmarks(res.data);
-    }).catch(error => {
-        console.error('Error fetching bookmarks:', error);
-    });
-};
-
-// Get the search input element
-const searchInput = document.querySelector('#searchInput');
-// Add an event listener to the search input
-searchInput.addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
+document.querySelector('#searchInput').addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
