@@ -65,47 +65,7 @@ class Bookmarks {
 
             const editButton = document.createElement('button');
             editButton.textContent = 'Edit';
-            editButton.addEventListener('click', async () => {
-                if (!isAdmin) {
-                    alert('Only admins can edit bookmarks.');
-                    return;
-                }
-                if (editButton.textContent === 'Edit') {
-                    // Make the fields editable
-                    firstTitleTd.contentEditable = "plaintext-only";
-                    secondTitleTd.contentEditable = "plaintext-only";
-                    urlTd.contentEditable = "plaintext-only";
-                    commentTd.contentEditable = "plaintext-only";
-
-                    // Change the button text to 'Submit'
-                    editButton.textContent = 'Submit';
-                } else {
-                    // Make the fields non-editable
-                    firstTitleTd.contentEditable = "false";
-                    secondTitleTd.contentEditable = "false";
-                    urlTd.contentEditable = "false";
-                    commentTd.contentEditable = "false";
-
-                    // Change the button text back to 'Edit'
-                    editButton.textContent = 'Edit';
-
-                    // Update the bookmark
-                    const updatedBookmark = {
-                        firstTitle: firstTitleTd.textContent,
-                        secondTitle: secondTitleTd.textContent,
-                        url: urlTd.textContent,
-                        comment: commentTd.textContent
-                    };
-                    await this.editBookmark(bookmark.id, updatedBookmark);
-
-                    // reload bookmarks
-                    let res = await axios.get('/api/bookmark-api/');
-                    this.bookmarks = res.data;
-
-                    // filter bookmarks
-                    this.filterBookmarks();
-                }
-            });
+            editButton.addEventListener('click', this.editBookmark.bind(this, bookmark.id, editButton, firstTitleTd, secondTitleTd, urlTd, commentTd));
             buttonTd.appendChild(editButton);
 
             const deleteButton = document.createElement('button');
@@ -160,8 +120,48 @@ class Bookmarks {
 
     }
 
-    editBookmark(id, bookmark) {
-        return axios.put(`/api/bookmark-api/${id}`, bookmark);
+    async editBookmark(id, editButton, firstTitleTd, secondTitleTd, urlTd, commentTd) {
+        if (!isAdmin) {
+            alert('Only admins can edit bookmarks.');
+            return;
+        }
+        if (editButton.textContent === 'Edit') {
+            // Make the fields editable
+            firstTitleTd.contentEditable = "plaintext-only";
+            secondTitleTd.contentEditable = "plaintext-only";
+            urlTd.contentEditable = "plaintext-only";
+            commentTd.contentEditable = "plaintext-only";
+
+            // Change the button text to 'Submit'
+            editButton.textContent = 'Submit';
+        } else {
+            // Make the fields non-editable
+            firstTitleTd.contentEditable = "false";
+            secondTitleTd.contentEditable = "false";
+            urlTd.contentEditable = "false";
+            commentTd.contentEditable = "false";
+
+            // Change the button text back to 'Edit'
+            editButton.textContent = 'Edit';
+
+            // Update the bookmark
+            const updatedBookmark = {
+                firstTitle: firstTitleTd.textContent,
+                secondTitle: secondTitleTd.textContent,
+                url: urlTd.textContent,
+                comment: commentTd.textContent
+            };
+            await axios.put(`/api/bookmark-api/${id}`, updatedBookmark);
+
+            // reload bookmarks
+            let res = await axios.get('/api/bookmark-api/');
+            this.bookmarks = res.data;
+
+            // filter bookmarks
+            this.filterBookmarks();
+        }
+
+
     }
 
     deleteBookmark(id) {
