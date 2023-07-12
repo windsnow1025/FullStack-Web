@@ -18,6 +18,17 @@ class Bookmarks {
     }
 
     displayBookmarks(bookmarks) {
+        // Sort bookmarks by firstTitle, then secondTitle, then comment
+        bookmarks.sort((a, b) => {
+            if (a.first_title < b.first_title) return -1;
+            if (a.first_title > b.first_title) return 1;
+            if (a.second_title < b.second_title) return -1;
+            if (a.second_title > b.second_title) return 1;
+            if (a.comment < b.comment) return -1;
+            if (a.comment > b.comment) return 1;
+            return 0;
+        });
+
         const tableBody = document.querySelector('#bookmarksTable tbody');
         // Remove all rows except the first one (the form)
         while (tableBody.children.length > 1) {
