@@ -70,20 +70,7 @@ class Bookmarks {
 
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
-            deleteButton.addEventListener('click', () => {
-                if (!isAdmin) {
-                    alert('Only admins can delete bookmarks.');
-                    return;
-                }
-                this.deleteBookmark(bookmark.id).then(async () => {
-                    // reload bookmarks
-                    let res = await axios.get('/api/bookmark-api/');
-                    this.bookmarks = res.data;
-
-                    // filter bookmarks
-                    this.filterBookmarks();
-                });
-            });
+            deleteButton.addEventListener('click', this.deleteBookmark.bind(this, bookmark.id));
             buttonTd.appendChild(deleteButton);
             tr.appendChild(buttonTd);
 
@@ -161,11 +148,20 @@ class Bookmarks {
             this.filterBookmarks();
         }
 
-
     }
 
-    deleteBookmark(id) {
-        return axios.delete(`/api/bookmark-api/${id}`);
+    async deleteBookmark(id) {
+        if (!isAdmin) {
+            alert('Only admins can delete bookmarks.');
+            return;
+        }
+        await axios.delete(`/api/bookmark-api/${id}`);
+        // reload bookmarks
+        let res = await axios.get('/api/bookmark-api/');
+        this.bookmarks = res.data;
+
+        // filter bookmarks
+        this.filterBookmarks();
     }
 
     filterBookmarks() {
