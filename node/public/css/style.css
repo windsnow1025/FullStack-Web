@@ -27,7 +27,7 @@ table {
 }
 
 table, th, td {
-    border: solid;
+    border: solid 1px;
     text-align: center;
 }
 
