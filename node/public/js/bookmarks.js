@@ -1,71 +1,191 @@
-import {getUsername} from "./auth";
+import axios from 'axios';
 
+// Account
+import {handleAuth, getUsername} from './auth.js';
+
+handleAuth();
 let username = getUsername();
-if (username == "windsnow1025@gmail.com") {
-    console.log("Admin");
-} else {
-    console.log("User");
-}
+let isAdmin = username == "windsnow1025@gmail.com";
 
-function displayRow(rowIndex) {
-    // Count the amount of divs in row
-    const rowDiv = document.getElementById("Row");
-    const rowNumber = rowDiv.getElementsByTagName('div').length;
-    for (let i = 1; i <= rowNumber; i++) {
-        var currentDivId = "Column" + i.toString();
-        var currentDiv = document.getElementById(currentDivId);
-        if (i != rowIndex) {
-            // Hide div in column
-            currentDiv.style.display = "none";
-            // Hide div in main
-            displayColumn(i, 0);
+// Theme
+import {initializeTheme} from './theme';
+
+initializeTheme();
+
+class Bookmarks {
+    constructor() {
+        this.bookmarks = [];
+        this.fetchBookmarks();
+    }
+
+    displayBookmarks(bookmarks) {
+        // Sort bookmarks by firstTitle, then secondTitle, then comment
+        bookmarks.sort((a, b) => {
+            if (a.first_title < b.first_title) return -1;
+            if (a.first_title > b.first_title) return 1;
+            if (a.second_title < b.second_title) return -1;
+            if (a.second_title > b.second_title) return 1;
+            if (a.comment < b.comment) return -1;
+            if (a.comment > b.comment) return 1;
+            return 0;
+        });
+
+        const tableBody = document.querySelector('#bookmarksTable tbody');
+        // Remove all rows except the first one (the form)
+        while (tableBody.children.length > 1) {
+            tableBody.removeChild(tableBody.lastChild);
+        }
+        bookmarks.forEach(bookmark => {
+            // Get the template
+            const templateTr = document.querySelector('tr[name="bookmarkRow"]');
+
+            // Clone the template
+            const tr = templateTr.cloneNode(true);
+
+            // Get the td elements
+            const firstTitleTd = tr.querySelector('[name="firstTitle"]');
+            const secondTitleTd = tr.querySelector('[name="secondTitle"]');
+            const urlTd = tr.querySelector('[name="url"]');
+            const commentTd = tr.querySelector('[name="comment"]');
+            const linkTd = tr.querySelector('[name="link"]');
+            const linkA = linkTd.querySelector('a');
+            const editButton = tr.querySelector('[name="editButton"]');
+            const deleteButton = tr.querySelector('[name="deleteButton"]');
+
+            // Set the text content
+            firstTitleTd.textContent = bookmark.first_title;
+            secondTitleTd.textContent = bookmark.second_title;
+            urlTd.textContent = bookmark.url;
+            commentTd.textContent = bookmark.comment;
+
+            // Set the link
+            linkA.href = bookmark.url;
+            linkA.textContent = bookmark.comment;
+
+            // Add event listeners
+            editButton.addEventListener('click', this.editBookmark.bind(this, bookmark.id, editButton, firstTitleTd, secondTitleTd, urlTd, commentTd));
+            deleteButton.addEventListener('click', this.deleteBookmark.bind(this, bookmark.id));
+
+            // Append the row to the table
+            tableBody.appendChild(tr);
+        });
+    }
+
+    async fetchBookmarks() {
+        let res = await axios.get('/api/bookmark-api/');
+        this.bookmarks = res.data;
+        this.displayBookmarks(this.bookmarks);
+    }
+
+    async addBookmark() {
+        if (!isAdmin) {
+            alert('Only admins can add bookmarks.');
+            return;
+        }
+
+        const row = document.querySelector('#addBookmarkRow');
+        const bookmark = {
+            firstTitle: row.children[0].textContent,
+            secondTitle: row.children[1].textContent,
+            url: row.children[2].textContent,
+            comment: row.children[3].textContent
+        };
+        await axios.post('/api/bookmark-api/', bookmark);
+
+        // Clear the input fields
+        for (let i = 0; i < 4; i++) {
+            row.children[i].textContent = '';
+        }
+
+        // reload bookmarks
+        let res = await axios.get('/api/bookmark-api/');
+        this.bookmarks = res.data;
+
+        // filter bookmarks
+        this.filterBookmarks();
+
+    }
+
+    async editBookmark(id, editButton, firstTitleTd, secondTitleTd, urlTd, commentTd) {
+        if (!isAdmin) {
+            alert('Only admins can edit bookmarks.');
+            return;
+        }
+        if (editButton.textContent === 'Edit') {
+            // Make the fields editable
+            firstTitleTd.contentEditable = "plaintext-only";
+            secondTitleTd.contentEditable = "plaintext-only";
+            urlTd.contentEditable = "plaintext-only";
+            commentTd.contentEditable = "plaintext-only";
+
+            // Change the button text to 'Submit'
+            editButton.textContent = 'Submit';
         } else {
-            // Show div in column
-            currentDiv.style.display = "block";
-            // Show the first div in main corresponding to the current div in column
-            displayColumn(i, 1);
+            // Make the fields non-editable
+            firstTitleTd.contentEditable = "false";
+            secondTitleTd.contentEditable = "false";
+            urlTd.contentEditable = "false";
+            commentTd.contentEditable = "false";
+
+            // Change the button text back to 'Edit'
+            editButton.textContent = 'Edit';
+
+            // Update the bookmark
+            const updatedBookmark = {
+                firstTitle: firstTitleTd.textContent,
+                secondTitle: secondTitleTd.textContent,
+                url: urlTd.textContent,
+                comment: commentTd.textContent
+            };
+            await axios.put(`/api/bookmark-api/${id}`, updatedBookmark);
+
+            // reload bookmarks
+            let res = await axios.get('/api/bookmark-api/');
+            this.bookmarks = res.data;
+
+            // filter bookmarks
+            this.filterBookmarks();
         }
+
     }
+
+    async deleteBookmark(id) {
+        if (!isAdmin) {
+            alert('Only admins can delete bookmarks.');
+            return;
+        }
+        await axios.delete(`/api/bookmark-api/${id}`);
+        // reload bookmarks
+        let res = await axios.get('/api/bookmark-api/');
+        this.bookmarks = res.data;
+
+        // filter bookmarks
+        this.filterBookmarks();
+    }
+
+    filterBookmarks() {
+        // Get the search input element
+        const searchInput = document.querySelector('#searchInput');
+        // Get the search term
+        const searchTerm = searchInput.value.toLowerCase();
+
+        // Filter the bookmarks
+        const filteredBookmarks = this.bookmarks.filter(bookmark => {
+            // Check if the search term is in the first title, second title, url or comment
+            return bookmark.first_title.toLowerCase().includes(searchTerm) ||
+                bookmark.second_title.toLowerCase().includes(searchTerm) ||
+                bookmark.url.toLowerCase().includes(searchTerm) ||
+                bookmark.comment.toLowerCase().includes(searchTerm);
+        });
+
+        // Display the filtered bookmarks
+        bookmarks.displayBookmarks(filteredBookmarks);
+    }
+
 }
 
-function displayColumn(rowIndex, columnIndex) {
-    // Count the amount of divs in column
-    const columnDiv = document.getElementById("Column" + rowIndex.toString());
-    const columnNumber = columnDiv.getElementsByTagName('div').length;
-    for (let i = 1; i <= columnNumber; i++) {
-        let currentDivId = "Main" + rowIndex.toString() + "-" + i.toString();
-        var currentDiv = document.getElementById(currentDivId);
-        if (i != columnIndex) {
-            // Hide in main
-            currentDiv.style.display = "none";
-        } else {
-            // Show in main
-            currentDiv.style.display = "block";
-        }
-    }
-}
+const bookmarks = new Bookmarks();
 
-// Add event listeners for Row
-let rowDiv = document.getElementById("Row");
-let divs = rowDiv.getElementsByTagName('div');
-for (let i = 0; i < divs.length; i++) {
-    divs[i].onclick = function () {
-        displayRow(i + 1);
-    }
-}
+document.querySelector('#addButton').addEventListener('click', bookmarks.addBookmark.bind(bookmarks));
 
-// Add event listeners for Column
-let item2 = document.getElementsByClassName("item2")[0];
-let columns = item2.getElementsByTagName('div');
-for (let i = 0; i < columns.length; i++) {
-    if (columns[i].id.includes("Column")) {
-        let divs = columns[i].getElementsByTagName('div');
-        for (let j = 0; j < divs.length; j++) {
-            divs[j].onclick = function () {
-                let currentRowIndex = Math.floor(i / rowDiv.getElementsByTagName('div').length) + 1;
-                let currentColumnIndex = i - (currentRowIndex - 1) * rowDiv.getElementsByTagName('div').length + 1;
-                displayColumn(currentColumnIndex, j + 1);
-            }
-        }
-    }
-}
+document.querySelector('#searchInput').addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
