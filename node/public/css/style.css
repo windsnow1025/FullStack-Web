@@ -51,6 +51,10 @@ table, th, td {
     overflow: auto;
 }
 
+.word-break {
+    word-break: break-all;
+}
+
 div.Flex-Center {
     display: flex;
     flex-flow: row;

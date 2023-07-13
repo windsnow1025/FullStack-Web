@@ -36,45 +36,37 @@ class Bookmarks {
             tableBody.removeChild(tableBody.lastChild);
         }
         bookmarks.forEach(bookmark => {
-            const tr = document.createElement('tr');
+            // Get the template
+            const templateTr = document.querySelector('tr[name="bookmarkRow"]');
 
-            // Create table data for each attribute
-            const firstTitleTd = document.createElement('td');
+            // Clone the template
+            const tr = templateTr.cloneNode(true);
+
+            // Get the td elements
+            const firstTitleTd = tr.querySelector('[name="firstTitle"]');
+            const secondTitleTd = tr.querySelector('[name="secondTitle"]');
+            const urlTd = tr.querySelector('[name="url"]');
+            const commentTd = tr.querySelector('[name="comment"]');
+            const linkTd = tr.querySelector('[name="link"]');
+            const linkA = linkTd.querySelector('a');
+            const editButton = tr.querySelector('[name="editButton"]');
+            const deleteButton = tr.querySelector('[name="deleteButton"]');
+
+            // Set the text content
             firstTitleTd.textContent = bookmark.first_title;
-            tr.appendChild(firstTitleTd);
-
-            const secondTitleTd = document.createElement('td');
             secondTitleTd.textContent = bookmark.second_title;
-            tr.appendChild(secondTitleTd);
-
-            const urlTd = document.createElement('td');
             urlTd.textContent = bookmark.url;
-            tr.appendChild(urlTd);
-
-            const commentTd = document.createElement('td');
             commentTd.textContent = bookmark.comment;
-            tr.appendChild(commentTd);
 
-            const urlCommentTd = document.createElement('td');
-            const a = document.createElement('a');
-            a.href = bookmark.url;
-            a.textContent = bookmark.comment;
-            urlCommentTd.appendChild(a);
-            tr.appendChild(urlCommentTd);
+            // Set the link
+            linkA.href = bookmark.url;
+            linkA.textContent = bookmark.comment;
 
-            const buttonTd = document.createElement('td');
-
-            const editButton = document.createElement('button');
-            editButton.textContent = 'Edit';
+            // Add event listeners
             editButton.addEventListener('click', this.editBookmark.bind(this, bookmark.id, editButton, firstTitleTd, secondTitleTd, urlTd, commentTd));
-            buttonTd.appendChild(editButton);
-
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
             deleteButton.addEventListener('click', this.deleteBookmark.bind(this, bookmark.id));
-            buttonTd.appendChild(deleteButton);
-            tr.appendChild(buttonTd);
 
+            // Append the row to the table
             tableBody.appendChild(tr);
         });
     }
