@@ -1,11 +1,9 @@
 import axios from 'axios';
 
 // Account
-import {handleAuth, getUsername} from './auth.js';
+import {handleAuth} from './auth.js';
 
 handleAuth();
-let username = getUsername();
-let isAdmin = username == "windsnow1025@gmail.com";
 
 // Theme
 import {initializeTheme} from './theme';
@@ -15,6 +13,12 @@ initializeTheme();
 class Bookmarks {
     constructor() {
         this.bookmarks = [];
+        this.token = localStorage.getItem('token');
+        this.instance = axios.create({
+            headers: {
+                Authorization: `Bearer ${this.token}`
+            }
+        });
         this.fetchBookmarks();
     }
 
@@ -72,16 +76,15 @@ class Bookmarks {
     }
 
     async fetchBookmarks() {
-        let res = await axios.get('/api/bookmark-api/');
+        const token = localStorage.getItem('token');
+
+        let res = await this.instance.get('/api/bookmark-api/');
+
         this.bookmarks = res.data;
         this.displayBookmarks(this.bookmarks);
     }
 
     async addBookmark() {
-        if (!isAdmin) {
-            alert('Only admins can add bookmarks.');
-            return;
-        }
 
         const row = document.querySelector('#addBookmarkRow');
         const bookmark = {
@@ -90,7 +93,7 @@ class Bookmarks {
             url: row.children[2].textContent,
             comment: row.children[3].textContent
         };
-        await axios.post('/api/bookmark-api/', bookmark);
+        await this.instance.post('/api/bookmark-api/', bookmark);
 
         // Clear the input fields
         for (let i = 0; i < 4; i++) {
@@ -98,7 +101,7 @@ class Bookmarks {
         }
 
         // reload bookmarks
-        let res = await axios.get('/api/bookmark-api/');
+        let res = await this.instance.get('/api/bookmark-api/');
         this.bookmarks = res.data;
 
         // filter bookmarks
@@ -107,10 +110,7 @@ class Bookmarks {
     }
 
     async editBookmark(id, editButton, firstTitleTd, secondTitleTd, urlTd, commentTd) {
-        if (!isAdmin) {
-            alert('Only admins can edit bookmarks.');
-            return;
-        }
+
         if (editButton.textContent === 'Edit') {
             // Make the fields editable
             firstTitleTd.contentEditable = "plaintext-only";
@@ -137,10 +137,10 @@ class Bookmarks {
                 url: urlTd.textContent,
                 comment: commentTd.textContent
             };
-            await axios.put(`/api/bookmark-api/${id}`, updatedBookmark);
+            await this.instance.put(`/api/bookmark-api/${id}`, updatedBookmark);
 
             // reload bookmarks
-            let res = await axios.get('/api/bookmark-api/');
+            let res = await this.instance.get('/api/bookmark-api/');
             this.bookmarks = res.data;
 
             // filter bookmarks
@@ -150,13 +150,9 @@ class Bookmarks {
     }
 
     async deleteBookmark(id) {
-        if (!isAdmin) {
-            alert('Only admins can delete bookmarks.');
-            return;
-        }
-        await axios.delete(`/api/bookmark-api/${id}`);
+        await this.instance.delete(`/api/bookmark-api/${id}`);
         // reload bookmarks
-        let res = await axios.get('/api/bookmark-api/');
+        let res = await this.instance.get('/api/bookmark-api/');
         this.bookmarks = res.data;
 
         // filter bookmarks
@@ -198,6 +194,7 @@ class Bookmarks {
 
 const bookmarks = new Bookmarks();
 
+document.querySelector('#addButton').addEventListener('click', bookmarks.addBookmark.bind(bookmarks));
 document.querySelector('#searchInput').addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
 document.querySelector('#searchFirstTitle').addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
 document.querySelector('#searchSecondTitle').addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
