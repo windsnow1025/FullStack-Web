@@ -20,7 +20,7 @@ router.use((req, res, next) => {
             req.user = user;
 
             // Only allow root user to access
-            if (req.user.username != rootUser) {
+            if (req.user.sub != rootUser) {
                 return res.sendStatus(403);
             }
 

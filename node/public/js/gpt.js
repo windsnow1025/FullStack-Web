@@ -37,6 +37,7 @@ class GPT {
         this.controller = null;
         this.create_render_message_divs();
         this.add(0);
+        this.token = localStorage.getItem('token');
     }
 
     async parse(content_div, content_value) {
@@ -182,19 +183,6 @@ class GPT {
         this.status.innerHTML = "Generating...";
         document.getElementById("generate").innerHTML = "Stop";
 
-        // Authentication
-        try {
-            const res = await axios.post("/api/auth-api/", { token: token });
-        } catch (err) {
-            this.status.innerHTML = "Ready";
-            document.getElementById("generate").innerHTML = "Generate";
-            const SignOutButton = document.getElementById("SignOutButton");
-            SignOutButton.click();
-            alert("Authentication failed. Please login again.");
-            return;
-        }
-
-
         // Set streaming status
         this.wait_response.push(true);
         const stream_index = this.wait_response.length - 1;
@@ -215,7 +203,11 @@ class GPT {
         // Stream mode off
         if (!stream) {
             try {
-                const res = await axios.post("/api/gpt/", formData);
+                const res = await axios.post("/api/gpt/", formData, {
+                    headers: {
+                        'Authorization': `Bearer ${this.token}`
+                    }
+                });
 
                 // Stop if not waiting for response
                 if (!this.wait_response[stream_index]) {
@@ -272,6 +264,9 @@ class GPT {
                     method: "POST",
                     body: formData,
                     signal: this.controller.signal,
+                    headers: {
+                        Authorization: `Bearer ${this.token}`
+                    }
                 });
 
                 const reader = response.body.getReader();

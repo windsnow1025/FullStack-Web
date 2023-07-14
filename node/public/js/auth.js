@@ -16,7 +16,7 @@ export function getUsername() {
     const token = getToken();
     if (token) {
         const payload = parseJwt(token);
-        return payload.username;
+        return payload.sub;
     }
     return null;
 }

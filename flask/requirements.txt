@@ -1,4 +1,5 @@
 openai
-Flask
+flask
+flask-jwt-extended
 waitress
 retry

@@ -16,7 +16,7 @@ router.post('/login', async (req, res, next) => {
             if (data.username == element.username && data.password == element.password) {
                 isSuccess = true;
                 // Generate token
-                const token = jwt.sign({ username: data.username }, process.env.JWT_SECRET, { expiresIn: '24h' });
+                const token = jwt.sign({ sub: data.username }, process.env.JWT_SECRET, { expiresIn: '24h' });
                 res.status(200).json({ token });
                 next();
             }
