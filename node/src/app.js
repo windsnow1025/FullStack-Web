@@ -7,7 +7,6 @@ const app = express();
 const userAPI = require('./user-api');
 const messageAPI = require('./message-api');
 const bookmarkAPI = require('./bookmark-api');
-const authAPI = require('./auth-api');
 
 
 // HTTP
@@ -33,4 +32,3 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api/user-api', userAPI);
 app.use('/api/message-api', messageAPI);
 app.use('/api/bookmark-api', bookmarkAPI);
-app.use('/api/auth-api', authAPI);
