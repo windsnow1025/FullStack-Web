@@ -164,28 +164,42 @@ class Bookmarks {
     }
 
     filterBookmarks() {
-        // Get the search input element
+        // Get the search input elements
         const searchInput = document.querySelector('#searchInput');
-        // Get the search term
+        const searchFirstTitle = document.querySelector('#searchFirstTitle');
+        const searchSecondTitle = document.querySelector('#searchSecondTitle');
+        const searchUrl = document.querySelector('#searchUrl');
+        const searchComment = document.querySelector('#searchComment');
+
+        // Get the search terms
         const searchTerm = searchInput.value.toLowerCase();
+        const firstTitleTerm = searchFirstTitle.value.toLowerCase();
+        const secondTitleTerm = searchSecondTitle.value.toLowerCase();
+        const urlTerm = searchUrl.value.toLowerCase();
+        const commentTerm = searchComment.value.toLowerCase();
 
         // Filter the bookmarks
         const filteredBookmarks = this.bookmarks.filter(bookmark => {
             // Check if the search term is in the first title, second title, url or comment
-            return bookmark.first_title.toLowerCase().includes(searchTerm) ||
-                bookmark.second_title.toLowerCase().includes(searchTerm) ||
-                bookmark.url.toLowerCase().includes(searchTerm) ||
-                bookmark.comment.toLowerCase().includes(searchTerm);
+            return (searchTerm === '' || bookmark.first_title.toLowerCase().includes(searchTerm) ||
+                    bookmark.second_title.toLowerCase().includes(searchTerm) ||
+                    bookmark.url.toLowerCase().includes(searchTerm) ||
+                    bookmark.comment.toLowerCase().includes(searchTerm)) &&
+                (firstTitleTerm === '' || bookmark.first_title.toLowerCase().includes(firstTitleTerm)) &&
+                (secondTitleTerm === '' || bookmark.second_title.toLowerCase().includes(secondTitleTerm)) &&
+                (urlTerm === '' || bookmark.url.toLowerCase().includes(urlTerm)) &&
+                (commentTerm === '' || bookmark.comment.toLowerCase().includes(commentTerm));
         });
 
         // Display the filtered bookmarks
         bookmarks.displayBookmarks(filteredBookmarks);
     }
-
 }
 
 const bookmarks = new Bookmarks();
 
-document.querySelector('#addButton').addEventListener('click', bookmarks.addBookmark.bind(bookmarks));
-
 document.querySelector('#searchInput').addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
+document.querySelector('#searchFirstTitle').addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
+document.querySelector('#searchSecondTitle').addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
+document.querySelector('#searchUrl').addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
+document.querySelector('#searchComment').addEventListener('input', bookmarks.filterBookmarks.bind(bookmarks));
