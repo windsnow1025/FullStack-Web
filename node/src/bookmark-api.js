@@ -3,6 +3,8 @@ const router = express.Router();
 const BookmarkSQL = require("./bookmark-sql");
 const jwt = require('jsonwebtoken');
 
+const rootUser = "windsnow1025@gmail.com";
+
 router.use((req, res, next) => {
 
     const authHeader = req.headers.authorization;
@@ -19,7 +21,7 @@ router.use((req, res, next) => {
 
             console.log(req.user.username);
 
-            if (req.user.username != "windsnow1025@gmail.com") {
+            if (req.user.username != rootUser) {
                 return res.sendStatus(403);
             }
 
