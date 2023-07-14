@@ -3,6 +3,16 @@ const router = express.Router();
 const BookmarkSQL = require("./bookmark-sql");
 const jwt = require('jsonwebtoken');
 
+router.get('/', async (req, res, next) => {
+    try {
+        let bookmarks = await BookmarkSQL.Show();
+        res.json(bookmarks);
+    } catch (err) {
+        console.error("Error in GET /:", err);
+        next(err);
+    }
+});
+
 const rootUser = "windsnow1025@gmail.com";
 
 router.use((req, res, next) => {
@@ -28,16 +38,6 @@ router.use((req, res, next) => {
         });
     } else {
         res.sendStatus(401);
-    }
-});
-
-router.get('/', async (req, res, next) => {
-    try {
-        let bookmarks = await BookmarkSQL.Show();
-        res.json(bookmarks);
-    } catch (err) {
-        console.error("Error in GET /:", err);
-        next(err);
     }
 });
 
